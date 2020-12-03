@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Projects on My Website</title>
+    <link>/project/</link>
+    <description>Recent content in Projects on My Website</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Wed, 02 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="/project/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Project 1: Exploratory Data Analysis</title>
+      <link>/project/project1/</link>
+      <pubDate>Wed, 02 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project1/</guid>
+      <description>Inroduction The two datasets I have chosen involve taking a deeper look into the music industry. The first dataset, spotify_songs, is a dataset that contains information from an experiment conducted by, Kaylin Pavlik. She used the spotifyr package to collect about 5000 songs from 5 main categories (EDM, Latin, Pop, R&amp;amp;B, Rap, &amp;amp; Rock). The dataset contains variables such as the artist name, track name/album name, genre, song popularity, and 12 quantitative audio features for each track.</description>
+    </item>
+    
+    <item>
+      <title>Project 2: Modeling, Testing, and Predicting</title>
+      <link>/project/project2/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project2/</guid>
+      <description>Introduction The dataset I have chosen takes a look into the effects of individuals with an aneurysmal subarachnoid hemorrhage. The dataset summarizes several clinical and one laboratory variable of 113 patients with an aneurysmal subarachnoid hemorrhage. The variables consist of measuring the Glasgow Outcome Score at 6 months (GOS6), outcome of the patient, gender, age, the World Federation of Neurological Surgeons score (WFNS), S100 Calcium Binding Protein B (S100B) concentrations, and Nucleoside diphosphate kinase A (NDKA) concentrations.</description>
+    </item>
+    
+  </channel>
+</rss>

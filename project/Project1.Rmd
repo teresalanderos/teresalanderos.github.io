@@ -1,0 +1,223 @@
+---
+title: 'Project 1: Exploratory Data Analysis'
+author: "Teresa Landeros (tl26544)"
+date: '10/18/20'
+output:
+  html_document:
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: yes
+  pdf_document:
+    toc: no
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = F, message = F,
+tidy=TRUE, tidy.opts=list(width.cutoff=60), R.options=list(max.print=100))
+```
+
+
+### Inroduction
+
+The two datasets I have chosen involve taking a deeper look into the music industry. The first dataset, spotify_songs, is a dataset that contains information from an experiment conducted by, Kaylin Pavlik. She used the spotifyr package to collect about 5000 songs from 5 main categories (EDM, Latin, Pop, R&B, Rap, & Rock). The dataset contains variables such as the artist name, track name/album name, genre, song popularity, and 12 quantitative audio features for each track. The second dataset, polls, is a dataset that contains information from an experiment conducted by, Simon Jockers at Datawrapper. The dataset was collected through BBC Music, who asked more than 100 critics, artist, and other music industry folks from 15 countries for their favorite hip-hop tracks. The dataset contains variables such as the track title, track artist, gender, track ranking, and the critics information.
+
+When choosing my datasets, I immediately knew I wanted to choose something music related. Music has been a persistent component of my everyday life as I wake up and put on my favorite jams while I get ready for the day I have ahead of me. I decided to specifically look into the genre of hip-hop/rap as it is a genre that I am not very familiar with and would love to gain an appreciation for. From the two datasets, I plan to analyze how audio features play a role into the overall ranking of the different tracks. One potential association that I expect is that tracks that rank higher in popularity will have high values for audio features such as loudness and speechiness while having lower values for audio features such as tempo, valence, and instrumentalness. I believe we would see these associations as most rap tracks are characterized by a slower, relaxed rhythmic style that contain rhythmic speech. I believe the more a track embodies the typically characteristics associated with the rap genre, the more likely it is to attract to audiences that enjoy this genre of music. 
+
+
+![](https://cdn1.vectorstock.com/i/1000x1000/43/95/rap-hip-hop-music-party-in-graffiti-vector-23244395.jpg)
+
+### Loading in the Data
+
+I loaded up the two datasets and named them as spotify_songs and polls into R using the following code below. After loading in the datasets, I took a look at the datasets in order to determine if they required tidying. Every observation had its own row and every variable had its own column, determining that both datasets were tidy. 
+
+```{r}
+spotify_songs <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-01-21/spotify_songs.csv')
+
+polls <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-04-14/polls.csv')
+```
+
+```{r}
+library(tidyverse)
+glimpse(spotify_songs)
+glimpse(polls)
+```
+
+
+
+### Tidying Data
+
+Since both of my datasets were tidy, in order to display the use of pivot_wider and pivot_longer functions I untidyed my data with pivot_wider and made them tidy again with pivot_longer.
+
+```{r}
+
+spotify_songs %>% pivot_wider(names_from="track_album_release_date",values_from="track_popularity") 
+
+spotify_songs %>% pivot_wider(names_from="track_album_release_date",values_from="track_popularity") %>% pivot_longer(cols=-c(1:21),names_to = "track_album_release_date", values_to="track_popularity", values_drop_na=T)
+
+
+polls %>% pivot_wider(names_from="year",values_from="rank")
+
+polls %>% pivot_wider(names_from="year",values_from="rank") %>% pivot_longer(cols=-c(1:7),names_to = "year", values_to="rank", values_drop_na=T)
+
+```
+
+
+### Joining/Merging
+
+After viewing the two datasets independently and verifying that they were tidy, I joined them together to form a single dataset. The two datasets were joined using inner_join based on their common ID variable of track name. I chose to use an inner join to combine these datasets as I wanted to drop all rows from each dataset that did not have a match according to their ID variable. 
+
+In the original dataset for spotify_songs, there was 32,833 observations and in the original dataset for polls, there was 535 observations. There are 32,578 observations in the spotify_songs dataset that are not in the polls dataset and there are 296 observations in the polls dataset that are not in the spotify_songs dataset. Therefore, when an inner join is performed, a total of 32,874 observations will be lost since these observations do not have a match according to their ID variable. 
+
+
+```{r}
+
+rap <- inner_join(spotify_songs, polls, by = c("track_name" = "title", "track_artist" = "artist"))
+
+anti_join(spotify_songs, polls, by = c("track_name" = "title"))
+anti_join(polls, spotify_songs, by = c("title"="track_name"))
+
+32578 + 296 #total number of observations lost
+
+
+```
+
+    
+### Wrangling 
+
+The first thing I did to make my data a lot easier to work with was to remove columns that were not necessary for my analysis through the select function. After selecting, I used the distinct function to remove any duplicate rows. 
+
+```{r}
+rap_2 <- rap %>% separate(track_album_release_date,into = c("year","month","day")) %>% select(-month, -day, -critic_country2, -track_album_id, -playlist_name,-playlist_id,-playlist_genre,-playlist_subgenre, -critic_name, -critic_rols, -critic_country, -track_id, -rank) %>% distinct()
+
+```
+
+After selecting for the columns of interest and getting rid of any duplicate rows, I used the mutate function to create a new categorical variable out of the track_popularity variable. The track popularity variable ranges from 0-100 so I made 3 distinct categories: high, med, and low. 
+
+```{r}
+rap_3 <- rap_2 %>% mutate(popularity_cat = case_when(track_popularity>66.6 ~ "high",track_popularity<=66.6 & 33.3<=track_popularity ~ "med",track_popularity<33.3 ~ "low"))
+
+```
+
+Below, I computed several summary statistics for the numeric variables: speechiness, tempo, valence, instrumentalness, loudness, and track popularity. I chose these variables to analyze as I believe that these quantitative audio variables are associated with the overall popularity of a track. 
+
+
+```{r}
+rap_3 %>% summarize(n())
+
+rap_3 %>% summarize_at(c("speechiness","tempo", "valence", "instrumentalness", "loudness", "track_popularity"), n_distinct, na.rm=T)
+
+rap_3 %>% summarize_at(c("speechiness","tempo", "valence", "instrumentalness", "loudness", "track_popularity"), mean, na.rm=T)
+
+rap_3 %>% summarize_at(c("speechiness","tempo", "valence", "instrumentalness", "loudness", "track_popularity"), median, na.rm=T)
+
+rap_3 %>% summarize_at(c("speechiness","tempo", "valence", "instrumentalness", "loudness", "track_popularity"), sd, na.rm=T)
+
+rap_3 %>% summarize_at(c("speechiness","tempo", "valence", "instrumentalness", "loudness", "track_popularity"), var, na.rm=T)
+
+rap_3 %>% summarize_at(c("speechiness","tempo", "valence", "instrumentalness", "loudness", "track_popularity"), min, na.rm=T)
+
+rap_3 %>% summarize_at(c("speechiness","tempo", "valence", "instrumentalness", "loudness", "track_popularity"), max, na.rm=T)
+
+rap_3 %>% filter(popularity_cat=="high") %>% summarize_at(c("speechiness","tempo", "valence", "instrumentalness", "loudness", "track_popularity"), mean, na.rm=T)
+
+rap_3 %>% filter(popularity_cat=="low") %>% summarize_at(c("speechiness","tempo", "valence", "instrumentalness", "loudness", "track_popularity"), mean, na.rm=T)
+
+
+```
+
+After analyzing the general summary statistics for the quantitative audio variables, I decided to create a few summary statistics after grouping by the new mutated variable, popularity category (high, med, low).
+
+```{r}
+rap_3 %>% group_by(popularity_cat) %>% summarize_at(c("speechiness","tempo", "valence", "instrumentalness", "loudness", "track_popularity"), mean, na.rm=T) %>% arrange(track_popularity) %>%  select(track_popularity,everything())
+
+rap_3 %>% group_by(popularity_cat) %>% summarize_at(c("speechiness","tempo", "valence", "instrumentalness", "loudness", "track_popularity"), min, na.rm=T) %>% arrange(track_popularity) %>%  select(track_popularity,everything())
+
+rap_3 %>% group_by(popularity_cat) %>% summarize_at(c("speechiness","tempo", "valence", "instrumentalness", "loudness", "track_popularity"), max, na.rm=T) %>% arrange(track_popularity) %>%  select(track_popularity,everything())
+```
+
+Lastly, I created a correlation matrix with all numeric variables contained in the dataset. 
+
+```{r}
+rap_3 %>% na.omit %>% select_if(is.numeric) %>% cor
+```
+
+From the summary statistics performed I was able to explore my polished dataset and analyze the quantitative audio variables of interest possible associations with the track popularity. In my final dataset, there was a total of 72 observations, with 63, 68, 64, 33, 68,	and 41 distinct observations for the variables speechiness, tempo, valence, instrumentalness, loudness, and track_popularity respectively. The mean, median, standard deviation, variance, min values, and max values were analyzed for each variable in order to get a general idea of what is going on with the whole dataset. In order to see the possible associations of these variables with the popularity of the track, I analyzed the mean values for the high and low categories of track popularity. From this, I was able to see that for the variables speechiness and loudness, their mean values were similar between both low and high popularity categories. On the other hand, the variables tempo, valence, and instrumentalness had mean values that varied from each other between the low and high popularity categories. 
+
+After analyzing the general summary statistics for the quantitative audio variables, I analyzed summary statistics for the same quantitative audio variables after grouping by the popularity categorical variable. Through this analysis, I was able to notice a similar pattern between the audio variables. For the variables speechiness and loudness, the mean was realtively similar between the three groups. On the other hand, for the variables tempo, valence, and instrumentalness there was relatively more variation between the three groups. Observations in the high popularity group had higher values for tempo while having lower values for valence and instrumentalness. The min and max values were also analyzed in order to understand the range within each variable for each group. Lastly, a correlation map was created in order to analyze the potential associations between the audio variables and track popularity. From this correlation map, the highest correlation is seen between track popularity and tempo while the lowest correlation is seen between loudness and track popularity. 
+
+### Visualizing
+
+I created a correlation heatmap of my numeric variables. 
+
+```{r}
+rap_cormat <- rap_3 %>% na.omit %>% select_if(is.numeric) %>% cor 
+
+rap_cormat %>% as.data.frame() %>% rownames_to_column("var1") %>% pivot_longer(-1, names_to="var2", values_to="correlation")  
+
+tidy_rap_cormat <- rap_cormat %>% as.data.frame() %>% rownames_to_column("var1") %>% pivot_longer(-1, names_to="var2", values_to="correlation") 
+
+tidy_rap_cormat %>% ggplot(aes(var1,var2, fill=correlation)) + geom_tile() + scale_fill_gradient2(low="red",mid="white",high="blue")+ 
+geom_text(aes(label=round(correlation,2)),color = "black", size = 2)+ 
+theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+coord_fixed() + ggtitle("Correlation Heatmap")+xlab("Variable 1")+ylab("Variable 2")
+```
+
+When analyzing the correlation heatmap, I focused on analyzing the correlations between track popularity and the different audio variables. The largest correlation value was found between track popularity and the audio variable tempo. I decided to create a scatterplot, plotting the tempo variable on the x-axis, the track popularity variable on the y-axis, and grouping the points by the popularity category. 
+
+After plotting the variables, I was able to determine that there was no strong correlation between tempo and track popularity. This was able to be determined as there is no strong pattern being displayed and the different points are rather more scattered with no particular patter. We can see that each group (high, med, low) have points that range from lower tempo values to higher tempo values and do not correlate with the popularity of the track. Even though this was the strongest correlation value found between track popularity and the different audio variables, the correlation value is not strong enough to be effective at influencing track popularity. 
+
+```{r}
+ggplot(rap_3, aes(x = tempo, y = track_popularity, color = popularity_cat)) + geom_point(size = 2) + ggtitle("Tempo vs Track Popularity")+xlab("Tempo")+ylab("Track Popularity") + theme_minimal() + scale_color_brewer(palette="Dark2")
+```
+
+Again, when analyzing the correlation heatmap, I focused on analyzing the correlations between track popularity and the different audio variables. The smallest correlation value was found between track popularity and the audio variable valence. I decided to create a bar graph, plotting the popularity category variable on the x-axis, the valence variable's means on the y-axis, and grouping the points by gender, in order to display and emphasize that there was no strong correlation between valence and track popularity. 
+
+After graphing the variables, it is evident that valence and track popularity do not have a strong correlation as each track popularity category averages are around the same value. Since I did not two significant categorial variables that I was analyzing, I decided to group by a categorical variable that I believed would be interesting to analyze outside of analyzing the association between audio variables and track popularity. When grouping by gender, I was very shocked to see that all female artist tracks fell into the high popularity category and did not fall in the medium or low categories. This leads me to think that there could possibly be a correlation between gender and track popularity that could be analyzed in future research. 
+
+```{r}
+ggplot(rap_3, aes(x = popularity_cat, fill = gender)) + geom_bar(aes(y=valence), stat="summary", fun=mean, position="dodge") + geom_errorbar(aes(y=valence), stat="summary", width=0.8, position="dodge") +ggtitle("Valence vs Track Popularity")+ xlab("Track Popularity")+ ylab("Valence") + scale_y_continuous(breaks=seq(0,1,.05)) + scale_fill_brewer(palette = "Oranges") + theme_light()
+```
+
+
+### Dimensionality Reduction 
+
+Due to my data having a very large amount of numeric variables, I decided to focus on the variables track_popularity, tempo, valence, loudness, speechiness, and instrumentalness, as they were my original variables of interest before any analysis were performed. 
+
+I first took my data set and scaled the variables in order for an accurate comparison between the variables. After scaling, I calculated the Euclidean distances and created a matrix for the resulting data. The number of clusters, k, was determined using the silhouette method. After determining to use 7 clusters, I successfully ran a PAM analysis and visualized the results. 
+
+When analyzing the clusters, the medoids (most central observations) for the 7 clusters were Hypnotize_6_1997, B.O.B._61_2000, Look At Me!_79_2017, A Milli_46_2008, Ha_47_1998,Elevators (Me & You)_59_1996, and Appeal_61_1994.The average values for each cluster were relatively higher for clusters 2-4, while clusters 5-7 had middle ranging values, and cluster 1 had the lower values. 
+
+After analyzing the clusters, the silhouette width was calculated in order to determine how good of a solution was attained. The average silhouette width was equal to be 0.22. From the predetermined cutoffs, the average silhouette width of 0.22 signifies that there was no substantial structure found. 
+
+```{r}
+rap_4 <- rap_3 %>% unite(track_name,track_popularity, year , col="unique", remove = F) %>% distinct() #creatiing a distinct unique variable
+
+rap_5 <- rap_4 %>% mutate_if(is.numeric, scale) %>% column_to_rownames("unique") %>% select(track_popularity, tempo, valence, loudness, speechiness, instrumentalness) %>% na.omit %>% dist %>% as.matrix
+
+library(cluster)
+
+
+sil_width<-vector()
+for(i in 2:10){  
+  pam_fit <- pam(rap_5, diss=TRUE, k = i)  
+  sil_width[i] <- pam_fit$silinfo$avg.width  
+}
+ggplot()+geom_line(aes(x=1:10,y=sil_width))+scale_x_continuous(name="k",breaks=1:10)
+
+pam_rap2 <- pam(rap_5, k=7, diss = T)
+
+final_rap2 <- rap_4 %>% select(track_popularity, tempo, valence, loudness, speechiness, instrumentalness) %>% mutate(cluster=as.factor(pam_rap2$clustering))
+
+library(GGally)
+ggpairs(final_rap2, columns=1:6, aes(color=cluster))
+
+pam_rap2$silinfo$avg.width
+plot(pam_rap2,which=2)
+```
+
+
+```{r}
+final_rap2 %>% rename(popularity=track_popularity)%>% group_by(cluster) %>% summarize_if(is.numeric, .funs = list("mean"=mean,"median"=median,"sd"=sd),na.rm=T) %>% pivot_longer(contains("_"))%>%separate(name,sep="_",into=c("variable","stat"))%>% pivot_wider(names_from = "variable",values_from="value")%>% arrange(stat)
+```
+

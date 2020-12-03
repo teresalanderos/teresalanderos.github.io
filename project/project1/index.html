@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Teresa Landeros" />
+    
+    <link rel="shortcut icon" type="image/x-icon" href="../../img/favicon.ico">
+    <title>Project 1: Exploratory Data Analysis</title>
+    <meta name="generator" content="Hugo 0.79.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="../../"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="../../post/">BLOG</a></li>
+        
+        <li><a href="../../projects/">PROJECTS</a></li>
+        
+        <li><a href="../../resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="../../project/project1/">Project 1: Exploratory Data Analysis</a></strong>
+          </h3>
+        </div>
+ 
+<div class="blog-title">
+          <h4>
+         December 2, 2020 
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<div id="inroduction" class="section level3">
+<h3>Inroduction</h3>
+<p>The two datasets I have chosen involve taking a deeper look into the music industry. The first dataset, spotify_songs, is a dataset that contains information from an experiment conducted by, Kaylin Pavlik. She used the spotifyr package to collect about 5000 songs from 5 main categories (EDM, Latin, Pop, R&amp;B, Rap, &amp; Rock). The dataset contains variables such as the artist name, track name/album name, genre, song popularity, and 12 quantitative audio features for each track. The second dataset, polls, is a dataset that contains information from an experiment conducted by, Simon Jockers at Datawrapper. The dataset was collected through BBC Music, who asked more than 100 critics, artist, and other music industry folks from 15 countries for their favorite hip-hop tracks. The dataset contains variables such as the track title, track artist, gender, track ranking, and the critics information.</p>
+<p>When choosing my datasets, I immediately knew I wanted to choose something music related. Music has been a persistent component of my everyday life as I wake up and put on my favorite jams while I get ready for the day I have ahead of me. I decided to specifically look into the genre of hip-hop/rap as it is a genre that I am not very familiar with and would love to gain an appreciation for. From the two datasets, I plan to analyze how audio features play a role into the overall ranking of the different tracks. One potential association that I expect is that tracks that rank higher in popularity will have high values for audio features such as loudness and speechiness while having lower values for audio features such as tempo, valence, and instrumentalness. I believe we would see these associations as most rap tracks are characterized by a slower, relaxed rhythmic style that contain rhythmic speech. I believe the more a track embodies the typically characteristics associated with the rap genre, the more likely it is to attract to audiences that enjoy this genre of music.</p>
+<p><img src="https://cdn1.vectorstock.com/i/1000x1000/43/95/rap-hip-hop-music-party-in-graffiti-vector-23244395.jpg" /> (width=200)</p>
+</div>
+<div id="loading-in-the-data" class="section level3">
+<h3>Loading in the Data</h3>
+<p>I loaded up the two datasets and named them as spotify_songs and polls into R using the following code below. After loading in the datasets, I took a look at the datasets in order to determine if they required tidying. Every observation had its own row and every variable had its own column, determining that both datasets were tidy.</p>
+<pre class="r"><code>spotify_songs &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-01-21/spotify_songs.csv&quot;)
+
+polls &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-04-14/polls.csv&quot;)</code></pre>
+<pre class="r"><code>library(tidyverse)
+glimpse(spotify_songs)</code></pre>
+<pre><code>## Rows: 32,833
+## Columns: 23
+## $ track_id                 &lt;chr&gt; &quot;6f807x0ima9a1j3VPbc7VN&quot;, &quot;0r7CVbZTWZgbTCYdf…
+## $ track_name               &lt;chr&gt; &quot;I Don&#39;t Care (with Justin Bieber) - Loud Lu…
+## $ track_artist             &lt;chr&gt; &quot;Ed Sheeran&quot;, &quot;Maroon 5&quot;, &quot;Zara Larsson&quot;, &quot;T…
+## $ track_popularity         &lt;dbl&gt; 66, 67, 70, 60, 69, 67, 62, 69, 68, 67, 58, …
+## $ track_album_id           &lt;chr&gt; &quot;2oCs0DGTsRO98Gh5ZSl2Cx&quot;, &quot;63rPSO264uRjW1X5E…
+## $ track_album_name         &lt;chr&gt; &quot;I Don&#39;t Care (with Justin Bieber) [Loud Lux…
+## $ track_album_release_date &lt;chr&gt; &quot;2019-06-14&quot;, &quot;2019-12-13&quot;, &quot;2019-07-05&quot;, &quot;2…
+## $ playlist_name            &lt;chr&gt; &quot;Pop Remix&quot;, &quot;Pop Remix&quot;, &quot;Pop Remix&quot;, &quot;Pop …
+## $ playlist_id              &lt;chr&gt; &quot;37i9dQZF1DXcZDD7cfEKhW&quot;, &quot;37i9dQZF1DXcZDD7c…
+## $ playlist_genre           &lt;chr&gt; &quot;pop&quot;, &quot;pop&quot;, &quot;pop&quot;, &quot;pop&quot;, &quot;pop&quot;, &quot;pop&quot;, &quot;p…
+## $ playlist_subgenre        &lt;chr&gt; &quot;dance pop&quot;, &quot;dance pop&quot;, &quot;dance pop&quot;, &quot;danc…
+## $ danceability             &lt;dbl&gt; 0.748, 0.726, 0.675, 0.718, 0.650, 0.675, 0.…
+## $ energy                   &lt;dbl&gt; 0.916, 0.815, 0.931, 0.930, 0.833, 0.919, 0.…
+## $ key                      &lt;dbl&gt; 6, 11, 1, 7, 1, 8, 5, 4, 8, 2, 6, 8, 1, 5, 5…
+## $ loudness                 &lt;dbl&gt; -2.634, -4.969, -3.432, -3.778, -4.672, -5.3…
+## $ mode                     &lt;dbl&gt; 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0,…
+## $ speechiness              &lt;dbl&gt; 0.0583, 0.0373, 0.0742, 0.1020, 0.0359, 0.12…
+## $ acousticness             &lt;dbl&gt; 0.10200, 0.07240, 0.07940, 0.02870, 0.08030,…
+## $ instrumentalness         &lt;dbl&gt; 0.00e+00, 4.21e-03, 2.33e-05, 9.43e-06, 0.00…
+## $ liveness                 &lt;dbl&gt; 0.0653, 0.3570, 0.1100, 0.2040, 0.0833, 0.14…
+## $ valence                  &lt;dbl&gt; 0.518, 0.693, 0.613, 0.277, 0.725, 0.585, 0.…
+## $ tempo                    &lt;dbl&gt; 122.036, 99.972, 124.008, 121.956, 123.976, …
+## $ duration_ms              &lt;dbl&gt; 194754, 162600, 176616, 169093, 189052, 1630…</code></pre>
+<pre class="r"><code>glimpse(polls)</code></pre>
+<pre><code>## Rows: 535
+## Columns: 9
+## $ rank            &lt;dbl&gt; 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3,…
+## $ title           &lt;chr&gt; &quot;Terminator X To The Edge of Panic&quot;, &quot;4th Chamber&quot;, &quot;…
+## $ artist          &lt;chr&gt; &quot;Public Enemy&quot;, &quot;Gza ft. Ghostface Killah &amp; Killah Pr…
+## $ gender          &lt;chr&gt; &quot;male&quot;, &quot;male&quot;, &quot;male&quot;, &quot;male&quot;, &quot;male&quot;, &quot;male&quot;, &quot;mixe…
+## $ year            &lt;dbl&gt; 1998, 1995, 1986, 2001, 1994, 1997, 1989, 1986, 1996,…
+## $ critic_name     &lt;chr&gt; &quot;Joseph Abajian&quot;, &quot;Joseph Abajian&quot;, &quot;Joseph Abajian&quot;,…
+## $ critic_rols     &lt;chr&gt; &quot;Fat Beats&quot;, &quot;Fat Beats&quot;, &quot;Fat Beats&quot;, &quot;Fat Beats&quot;, &quot;…
+## $ critic_country  &lt;chr&gt; &quot;US&quot;, &quot;US&quot;, &quot;US&quot;, &quot;US&quot;, &quot;US&quot;, &quot;US&quot;, &quot;US&quot;, &quot;US&quot;, &quot;US&quot;,…
+## $ critic_country2 &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…</code></pre>
+</div>
+<div id="tidying-data" class="section level3">
+<h3>Tidying Data</h3>
+<p>Since both of my datasets were tidy, in order to display the use of pivot_wider and pivot_longer functions I untidyed my data with pivot_wider and made them tidy again with pivot_longer.</p>
+<pre class="r"><code>spotify_songs %&gt;% pivot_wider(names_from = &quot;track_album_release_date&quot;, 
+    values_from = &quot;track_popularity&quot;)</code></pre>
+<pre><code>## # A tibble: 32,833 x 4,551
+##    track_id track_name track_artist track_album_id track_album_name
+##    &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;        &lt;chr&gt;          &lt;chr&gt;           
+##  1 6f807x0… I Don&#39;t C… Ed Sheeran   2oCs0DGTsRO98… I Don&#39;t Care (w…
+##  2 0r7CVbZ… Memories … Maroon 5     63rPSO264uRjW… Memories (Dillo…
+##  3 1z1Hg7V… All the T… Zara Larsson 1HoSmj2eLcsrR… All the Time (D…
+##  4 75Fpbth… Call You … The Chainsm… 1nqYsOef1yKKu… Call You Mine -…
+##  5 1e8PAfc… Someone Y… Lewis Capal… 7m7vv9wlQ4i0L… Someone You Lov…
+##  6 7fvUMiy… Beautiful… Ed Sheeran   2yiy9cd2QktrN… Beautiful Peopl…
+##  7 2OAylPU… Never Rea… Katy Perry   7INHYSeusaFly… Never Really Ov…
+##  8 6b1RNvA… Post Malo… Sam Feldt    6703SRPsLkS4b… Post Malone (fe…
+##  9 7bF6tCO… Tough Lov… Avicii       7CvAfGvq4RlIw… Tough Love (Tië…
+## 10 1IXGILk… If I Can&#39;… Shawn Mendes 4QxzbfSsVryEQ… If I Can&#39;t Have…
+## # … with 32,823 more rows, and 4,546 more variables: playlist_name &lt;chr&gt;,
+## #   playlist_id &lt;chr&gt;, playlist_genre &lt;chr&gt;, playlist_subgenre &lt;chr&gt;,
+## #   danceability &lt;dbl&gt;, energy &lt;dbl&gt;, key &lt;dbl&gt;, loudness &lt;dbl&gt;, mode &lt;dbl&gt;,
+## #   speechiness &lt;dbl&gt;, acousticness &lt;dbl&gt;, instrumentalness &lt;dbl&gt;,
+## #   liveness &lt;dbl&gt;, valence &lt;dbl&gt;, tempo &lt;dbl&gt;, duration_ms &lt;dbl&gt;,
+## #   `2019-06-14` &lt;dbl&gt;, `2019-12-13` &lt;dbl&gt;, `2019-07-05` &lt;dbl&gt;,
+## #   `2019-07-19` &lt;dbl&gt;, `2019-03-05` &lt;dbl&gt;, `2019-07-11` &lt;dbl&gt;,
+## #   `2019-07-26` &lt;dbl&gt;, `2019-08-29` &lt;dbl&gt;, `2019-06-20` &lt;dbl&gt;,
+## #   `2019-06-21` &lt;dbl&gt;, `2019-08-16` &lt;dbl&gt;, `2019-03-29` &lt;dbl&gt;,
+## #   `2019-05-17` &lt;dbl&gt;, `2019-07-12` &lt;dbl&gt;, `2019-12-11` &lt;dbl&gt;,
+## #   `2019-05-03` &lt;dbl&gt;, `2018-12-28` &lt;dbl&gt;, `2019-03-08` &lt;dbl&gt;,
+## #   `2019-10-18` &lt;dbl&gt;, `2019-08-23` &lt;dbl&gt;, `2019-05-08` &lt;dbl&gt;,
+## #   `2019-10-25` &lt;dbl&gt;, `2019-05-24` &lt;dbl&gt;, `2019-08-09` &lt;dbl&gt;,
+## #   `2019-02-01` &lt;dbl&gt;, `2019-05-23` &lt;dbl&gt;, `2019-04-19` &lt;dbl&gt;,
+## #   `2019-11-01` &lt;dbl&gt;, `2018-11-30` &lt;dbl&gt;, `2018-11-23` &lt;dbl&gt;,
+## #   `2019-09-05` &lt;dbl&gt;, `2019-11-22` &lt;dbl&gt;, `2018-07-25` &lt;dbl&gt;,
+## #   `2019-06-27` &lt;dbl&gt;, `2019-06-28` &lt;dbl&gt;, `2019-09-27` &lt;dbl&gt;,
+## #   `2019-01-25` &lt;dbl&gt;, `2019-11-12` &lt;dbl&gt;, `2019-04-29` &lt;dbl&gt;,
+## #   `2019-11-15` &lt;dbl&gt;, `2018-10-19` &lt;dbl&gt;, `2019-12-12` &lt;dbl&gt;,
+## #   `2019-12-27` &lt;dbl&gt;, `2019-09-12` &lt;dbl&gt;, `2018-09-28` &lt;dbl&gt;,
+## #   `2019-03-27` &lt;dbl&gt;, `2019-10-11` &lt;dbl&gt;, `2019-10-04` &lt;dbl&gt;,
+## #   `2019-09-13` &lt;dbl&gt;, `2018-02-09` &lt;dbl&gt;, `2019-05-31` &lt;dbl&gt;,
+## #   `2019-04-12` &lt;dbl&gt;, `2019-07-24` &lt;dbl&gt;, `2019-03-22` &lt;dbl&gt;,
+## #   `2018-10-18` &lt;dbl&gt;, `2018-03-16` &lt;dbl&gt;, `2019-03-01` &lt;dbl&gt;,
+## #   `2018-11-09` &lt;dbl&gt;, `2018-09-27` &lt;dbl&gt;, `2019-04-10` &lt;dbl&gt;,
+## #   `2018-01-23` &lt;dbl&gt;, `2019-10-24` &lt;dbl&gt;, `2019-05-13` &lt;dbl&gt;,
+## #   `2019-01-18` &lt;dbl&gt;, `2019-06-18` &lt;dbl&gt;, `2019-09-06` &lt;dbl&gt;,
+## #   `2018-08-31` &lt;dbl&gt;, `2017-03-02` &lt;dbl&gt;, `2019-02-21` &lt;dbl&gt;,
+## #   `2017-03-03` &lt;dbl&gt;, `2019-02-14` &lt;dbl&gt;, `2018-09-06` &lt;dbl&gt;,
+## #   `2018-01-25` &lt;dbl&gt;, `2018-12-07` &lt;dbl&gt;, `2019-02-27` &lt;dbl&gt;,
+## #   `2017-10-13` &lt;dbl&gt;, `2019-04-05` &lt;dbl&gt;, `2019-05-30` &lt;dbl&gt;,
+## #   `2019-08-02` &lt;dbl&gt;, `2017-02-23` &lt;dbl&gt;, `2016-07-29` &lt;dbl&gt;,
+## #   `2014-10-13` &lt;dbl&gt;, `2012-01-01` &lt;dbl&gt;, `2018-05-17` &lt;dbl&gt;, …</code></pre>
+<pre class="r"><code>spotify_songs %&gt;% pivot_wider(names_from = &quot;track_album_release_date&quot;, 
+    values_from = &quot;track_popularity&quot;) %&gt;% pivot_longer(cols = -c(1:21), 
+    names_to = &quot;track_album_release_date&quot;, values_to = &quot;track_popularity&quot;, 
+    values_drop_na = T)</code></pre>
+<pre><code>## # A tibble: 32,833 x 23
+##    track_id track_name track_artist track_album_id track_album_name
+##    &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;        &lt;chr&gt;          &lt;chr&gt;           
+##  1 6f807x0… I Don&#39;t C… Ed Sheeran   2oCs0DGTsRO98… I Don&#39;t Care (w…
+##  2 0r7CVbZ… Memories … Maroon 5     63rPSO264uRjW… Memories (Dillo…
+##  3 1z1Hg7V… All the T… Zara Larsson 1HoSmj2eLcsrR… All the Time (D…
+##  4 75Fpbth… Call You … The Chainsm… 1nqYsOef1yKKu… Call You Mine -…
+##  5 1e8PAfc… Someone Y… Lewis Capal… 7m7vv9wlQ4i0L… Someone You Lov…
+##  6 7fvUMiy… Beautiful… Ed Sheeran   2yiy9cd2QktrN… Beautiful Peopl…
+##  7 2OAylPU… Never Rea… Katy Perry   7INHYSeusaFly… Never Really Ov…
+##  8 6b1RNvA… Post Malo… Sam Feldt    6703SRPsLkS4b… Post Malone (fe…
+##  9 7bF6tCO… Tough Lov… Avicii       7CvAfGvq4RlIw… Tough Love (Tië…
+## 10 1IXGILk… If I Can&#39;… Shawn Mendes 4QxzbfSsVryEQ… If I Can&#39;t Have…
+## # … with 32,823 more rows, and 18 more variables: playlist_name &lt;chr&gt;,
+## #   playlist_id &lt;chr&gt;, playlist_genre &lt;chr&gt;, playlist_subgenre &lt;chr&gt;,
+## #   danceability &lt;dbl&gt;, energy &lt;dbl&gt;, key &lt;dbl&gt;, loudness &lt;dbl&gt;, mode &lt;dbl&gt;,
+## #   speechiness &lt;dbl&gt;, acousticness &lt;dbl&gt;, instrumentalness &lt;dbl&gt;,
+## #   liveness &lt;dbl&gt;, valence &lt;dbl&gt;, tempo &lt;dbl&gt;, duration_ms &lt;dbl&gt;,
+## #   track_album_release_date &lt;chr&gt;, track_popularity &lt;dbl&gt;</code></pre>
+<pre class="r"><code>polls %&gt;% pivot_wider(names_from = &quot;year&quot;, values_from = &quot;rank&quot;)</code></pre>
+<pre><code>## # A tibble: 535 x 47
+##    title artist gender critic_name critic_rols critic_country critic_country2
+##    &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;       &lt;chr&gt;       &lt;chr&gt;          &lt;chr&gt;          
+##  1 Term… Publi… male   Joseph Aba… Fat Beats   US             &lt;NA&gt;           
+##  2 4th … Gza f… male   Joseph Aba… Fat Beats   US             &lt;NA&gt;           
+##  3 Pete… Run D… male   Joseph Aba… Fat Beats   US             &lt;NA&gt;           
+##  4 Play… GLOBE… male   Joseph Aba… Fat Beats   US             &lt;NA&gt;           
+##  5 Time… O.C.   male   Joseph Aba… Fat Beats   US             &lt;NA&gt;           
+##  6 Play… Slum … male   Biba Adams  Critic      US             &lt;NA&gt;           
+##  7 Self… Stop … mixed  Biba Adams  Critic      US             &lt;NA&gt;           
+##  8 Push… Salt-… female Biba Adams  Critic      US             &lt;NA&gt;           
+##  9 Ambi… 2Pac   male   Biba Adams  Critic      US             &lt;NA&gt;           
+## 10 Big … JAY-Z… male   Biba Adams  Critic      US             &lt;NA&gt;           
+## # … with 525 more rows, and 40 more variables: `1998` &lt;dbl&gt;, `1995` &lt;dbl&gt;,
+## #   `1986` &lt;dbl&gt;, `2001` &lt;dbl&gt;, `1994` &lt;dbl&gt;, `1997` &lt;dbl&gt;, `1989` &lt;dbl&gt;,
+## #   `1996` &lt;dbl&gt;, `1999` &lt;dbl&gt;, `1979` &lt;dbl&gt;, `1984` &lt;dbl&gt;, `1988` &lt;dbl&gt;,
+## #   `1982` &lt;dbl&gt;, `1992` &lt;dbl&gt;, `2003` &lt;dbl&gt;, `2012` &lt;dbl&gt;, `2002` &lt;dbl&gt;,
+## #   `2004` &lt;dbl&gt;, `1993` &lt;dbl&gt;, `2010` &lt;dbl&gt;, `2013` &lt;dbl&gt;, `2011` &lt;dbl&gt;,
+## #   `2006` &lt;dbl&gt;, `2000` &lt;dbl&gt;, `2007` &lt;dbl&gt;, `2015` &lt;dbl&gt;, `2014` &lt;dbl&gt;,
+## #   `1987` &lt;dbl&gt;, `1991` &lt;dbl&gt;, `1983` &lt;dbl&gt;, `2016` &lt;dbl&gt;, `2017` &lt;dbl&gt;,
+## #   `2019` &lt;dbl&gt;, `2008` &lt;dbl&gt;, `1990` &lt;dbl&gt;, `2005` &lt;dbl&gt;, `1985` &lt;dbl&gt;,
+## #   `2018` &lt;dbl&gt;, `1980` &lt;dbl&gt;, `2009` &lt;dbl&gt;</code></pre>
+<pre class="r"><code>polls %&gt;% pivot_wider(names_from = &quot;year&quot;, values_from = &quot;rank&quot;) %&gt;% 
+    pivot_longer(cols = -c(1:7), names_to = &quot;year&quot;, values_to = &quot;rank&quot;, 
+        values_drop_na = T)</code></pre>
+<pre><code>## # A tibble: 535 x 9
+##    title artist gender critic_name critic_rols critic_country critic_country2
+##    &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;       &lt;chr&gt;       &lt;chr&gt;          &lt;chr&gt;          
+##  1 Term… Publi… male   Joseph Aba… Fat Beats   US             &lt;NA&gt;           
+##  2 4th … Gza f… male   Joseph Aba… Fat Beats   US             &lt;NA&gt;           
+##  3 Pete… Run D… male   Joseph Aba… Fat Beats   US             &lt;NA&gt;           
+##  4 Play… GLOBE… male   Joseph Aba… Fat Beats   US             &lt;NA&gt;           
+##  5 Time… O.C.   male   Joseph Aba… Fat Beats   US             &lt;NA&gt;           
+##  6 Play… Slum … male   Biba Adams  Critic      US             &lt;NA&gt;           
+##  7 Self… Stop … mixed  Biba Adams  Critic      US             &lt;NA&gt;           
+##  8 Push… Salt-… female Biba Adams  Critic      US             &lt;NA&gt;           
+##  9 Ambi… 2Pac   male   Biba Adams  Critic      US             &lt;NA&gt;           
+## 10 Big … JAY-Z… male   Biba Adams  Critic      US             &lt;NA&gt;           
+## # … with 525 more rows, and 2 more variables: year &lt;chr&gt;, rank &lt;dbl&gt;</code></pre>
+</div>
+<div id="joiningmerging" class="section level3">
+<h3>Joining/Merging</h3>
+<p>After viewing the two datasets independently and verifying that they were tidy, I joined them together to form a single dataset. The two datasets were joined using inner_join based on their common ID variable of track name. I chose to use an inner join to combine these datasets as I wanted to drop all rows from each dataset that did not have a match according to their ID variable.</p>
+<p>In the original dataset for spotify_songs, there was 32,833 observations and in the original dataset for polls, there was 535 observations. There are 32,578 observations in the spotify_songs dataset that are not in the polls dataset and there are 296 observations in the polls dataset that are not in the spotify_songs dataset. Therefore, when an inner join is performed, a total of 32,874 observations will be lost since these observations do not have a match according to their ID variable.</p>
+<pre class="r"><code>rap &lt;- inner_join(spotify_songs, polls, by = c(track_name = &quot;title&quot;, 
+    track_artist = &quot;artist&quot;))
+
+anti_join(spotify_songs, polls, by = c(track_name = &quot;title&quot;))</code></pre>
+<pre><code>## # A tibble: 32,578 x 23
+##    track_id track_name track_artist track_popularity track_album_id
+##    &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;                   &lt;dbl&gt; &lt;chr&gt;         
+##  1 6f807x0… I Don&#39;t C… Ed Sheeran                 66 2oCs0DGTsRO98…
+##  2 0r7CVbZ… Memories … Maroon 5                   67 63rPSO264uRjW…
+##  3 1z1Hg7V… All the T… Zara Larsson               70 1HoSmj2eLcsrR…
+##  4 75Fpbth… Call You … The Chainsm…               60 1nqYsOef1yKKu…
+##  5 1e8PAfc… Someone Y… Lewis Capal…               69 7m7vv9wlQ4i0L…
+##  6 7fvUMiy… Beautiful… Ed Sheeran                 67 2yiy9cd2QktrN…
+##  7 2OAylPU… Never Rea… Katy Perry                 62 7INHYSeusaFly…
+##  8 6b1RNvA… Post Malo… Sam Feldt                  69 6703SRPsLkS4b…
+##  9 7bF6tCO… Tough Lov… Avicii                     68 7CvAfGvq4RlIw…
+## 10 1IXGILk… If I Can&#39;… Shawn Mendes               67 4QxzbfSsVryEQ…
+## # … with 32,568 more rows, and 18 more variables: track_album_name &lt;chr&gt;,
+## #   track_album_release_date &lt;chr&gt;, playlist_name &lt;chr&gt;, playlist_id &lt;chr&gt;,
+## #   playlist_genre &lt;chr&gt;, playlist_subgenre &lt;chr&gt;, danceability &lt;dbl&gt;,
+## #   energy &lt;dbl&gt;, key &lt;dbl&gt;, loudness &lt;dbl&gt;, mode &lt;dbl&gt;, speechiness &lt;dbl&gt;,
+## #   acousticness &lt;dbl&gt;, instrumentalness &lt;dbl&gt;, liveness &lt;dbl&gt;, valence &lt;dbl&gt;,
+## #   tempo &lt;dbl&gt;, duration_ms &lt;dbl&gt;</code></pre>
+<pre class="r"><code>anti_join(polls, spotify_songs, by = c(title = &quot;track_name&quot;))</code></pre>
+<pre><code>## # A tibble: 296 x 9
+##     rank title artist gender  year critic_name critic_rols critic_country
+##    &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;       &lt;chr&gt;       &lt;chr&gt;         
+##  1     1 Term… Publi… male    1998 Joseph Aba… Fat Beats   US            
+##  2     3 Pete… Run D… male    1986 Joseph Aba… Fat Beats   US            
+##  3     4 Play… GLOBE… male    2001 Joseph Aba… Fat Beats   US            
+##  4     5 Time… O.C.   male    1994 Joseph Aba… Fat Beats   US            
+##  5     2 Self… Stop … mixed   1989 Biba Adams  Critic      US            
+##  6     5 Big … JAY-Z… male    1999 Biba Adams  Critic      US            
+##  7     1 Rapp… Sugar… male    1979 Dart Adams  Critic      US            
+##  8     2 Suck… Run D… male    1984 Dart Adams  Critic      US            
+##  9     3 Lyri… Eric … male    1988 Dart Adams  Critic      US            
+## 10     2 Nuth… Dr Dr… male    1992 Insanul Ah… Genius      US            
+## # … with 286 more rows, and 1 more variable: critic_country2 &lt;chr&gt;</code></pre>
+<pre class="r"><code>32578 + 296  #total number of observations lost</code></pre>
+<pre><code>## [1] 32874</code></pre>
+</div>
+<div id="wrangling" class="section level3">
+<h3>Wrangling</h3>
+<p>The first thing I did to make my data a lot easier to work with was to remove columns that were not necessary for my analysis through the select function. After selecting, I used the distinct function to remove any duplicate rows.</p>
+<pre class="r"><code>rap_2 &lt;- rap %&gt;% separate(track_album_release_date, into = c(&quot;year&quot;, 
+    &quot;month&quot;, &quot;day&quot;)) %&gt;% select(-month, -day, -critic_country2, 
+    -track_album_id, -playlist_name, -playlist_id, -playlist_genre, 
+    -playlist_subgenre, -critic_name, -critic_rols, -critic_country, 
+    -track_id, -rank) %&gt;% distinct()</code></pre>
+<p>After selecting for the columns of interest and getting rid of any duplicate rows, I used the mutate function to create a new categorical variable out of the track_popularity variable. The track popularity variable ranges from 0-100 so I made 3 distinct categories: high, med, and low.</p>
+<pre class="r"><code>rap_3 &lt;- rap_2 %&gt;% mutate(popularity_cat = case_when(track_popularity &gt; 
+    66.6 ~ &quot;high&quot;, track_popularity &lt;= 66.6 &amp; 33.3 &lt;= track_popularity ~ 
+    &quot;med&quot;, track_popularity &lt; 33.3 ~ &quot;low&quot;))</code></pre>
+<p>Below, I computed several summary statistics for the numeric variables: speechiness, tempo, valence, instrumentalness, loudness, and track popularity. I chose these variables to analyze as I believe that these quantitative audio variables are associated with the overall popularity of a track.</p>
+<pre class="r"><code>rap_3 %&gt;% summarize(n())</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `n()`
+##   &lt;int&gt;
+## 1    72</code></pre>
+<pre class="r"><code>rap_3 %&gt;% summarize_at(c(&quot;speechiness&quot;, &quot;tempo&quot;, &quot;valence&quot;, &quot;instrumentalness&quot;, 
+    &quot;loudness&quot;, &quot;track_popularity&quot;), n_distinct, na.rm = T)</code></pre>
+<pre><code>## # A tibble: 1 x 6
+##   speechiness tempo valence instrumentalness loudness track_popularity
+##         &lt;int&gt; &lt;int&gt;   &lt;int&gt;            &lt;int&gt;    &lt;int&gt;            &lt;int&gt;
+## 1          63    68      64               33       68               41</code></pre>
+<pre class="r"><code>rap_3 %&gt;% summarize_at(c(&quot;speechiness&quot;, &quot;tempo&quot;, &quot;valence&quot;, &quot;instrumentalness&quot;, 
+    &quot;loudness&quot;, &quot;track_popularity&quot;), mean, na.rm = T)</code></pre>
+<pre><code>## # A tibble: 1 x 6
+##   speechiness tempo valence instrumentalness loudness track_popularity
+##         &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;            &lt;dbl&gt;    &lt;dbl&gt;            &lt;dbl&gt;
+## 1       0.250  114.   0.629           0.0254    -7.38             43.8</code></pre>
+<pre class="r"><code>rap_3 %&gt;% summarize_at(c(&quot;speechiness&quot;, &quot;tempo&quot;, &quot;valence&quot;, &quot;instrumentalness&quot;, 
+    &quot;loudness&quot;, &quot;track_popularity&quot;), median, na.rm = T)</code></pre>
+<pre><code>## # A tibble: 1 x 6
+##   speechiness tempo valence instrumentalness loudness track_popularity
+##         &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;            &lt;dbl&gt;    &lt;dbl&gt;            &lt;dbl&gt;
+## 1        0.26  98.2   0.652       0.00000084    -7.16               55</code></pre>
+<pre class="r"><code>rap_3 %&gt;% summarize_at(c(&quot;speechiness&quot;, &quot;tempo&quot;, &quot;valence&quot;, &quot;instrumentalness&quot;, 
+    &quot;loudness&quot;, &quot;track_popularity&quot;), sd, na.rm = T)</code></pre>
+<pre><code>## # A tibble: 1 x 6
+##   speechiness tempo valence instrumentalness loudness track_popularity
+##         &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;            &lt;dbl&gt;    &lt;dbl&gt;            &lt;dbl&gt;
+## 1       0.111  33.6   0.177           0.0844     2.80             28.0</code></pre>
+<pre class="r"><code>rap_3 %&gt;% summarize_at(c(&quot;speechiness&quot;, &quot;tempo&quot;, &quot;valence&quot;, &quot;instrumentalness&quot;, 
+    &quot;loudness&quot;, &quot;track_popularity&quot;), var, na.rm = T)</code></pre>
+<pre><code>## # A tibble: 1 x 6
+##   speechiness tempo valence instrumentalness loudness track_popularity
+##         &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;            &lt;dbl&gt;    &lt;dbl&gt;            &lt;dbl&gt;
+## 1      0.0124 1128.  0.0312          0.00713     7.82             783.</code></pre>
+<pre class="r"><code>rap_3 %&gt;% summarize_at(c(&quot;speechiness&quot;, &quot;tempo&quot;, &quot;valence&quot;, &quot;instrumentalness&quot;, 
+    &quot;loudness&quot;, &quot;track_popularity&quot;), min, na.rm = T)</code></pre>
+<pre><code>## # A tibble: 1 x 6
+##   speechiness tempo valence instrumentalness loudness track_popularity
+##         &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;            &lt;dbl&gt;    &lt;dbl&gt;            &lt;dbl&gt;
+## 1      0.0313  74.5   0.203                0    -13.9                0</code></pre>
+<pre class="r"><code>rap_3 %&gt;% summarize_at(c(&quot;speechiness&quot;, &quot;tempo&quot;, &quot;valence&quot;, &quot;instrumentalness&quot;, 
+    &quot;loudness&quot;, &quot;track_popularity&quot;), max, na.rm = T)</code></pre>
+<pre><code>## # A tibble: 1 x 6
+##   speechiness tempo valence instrumentalness loudness track_popularity
+##         &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;            &lt;dbl&gt;    &lt;dbl&gt;            &lt;dbl&gt;
+## 1       0.434  181.   0.968            0.426    -2.26               81</code></pre>
+<pre class="r"><code>rap_3 %&gt;% filter(popularity_cat == &quot;high&quot;) %&gt;% summarize_at(c(&quot;speechiness&quot;, 
+    &quot;tempo&quot;, &quot;valence&quot;, &quot;instrumentalness&quot;, &quot;loudness&quot;, &quot;track_popularity&quot;), 
+    mean, na.rm = T)</code></pre>
+<pre><code>## # A tibble: 1 x 6
+##   speechiness tempo valence instrumentalness loudness track_popularity
+##         &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;            &lt;dbl&gt;    &lt;dbl&gt;            &lt;dbl&gt;
+## 1       0.246  128.   0.595          0.00825    -7.14             72.7</code></pre>
+<pre class="r"><code>rap_3 %&gt;% filter(popularity_cat == &quot;low&quot;) %&gt;% summarize_at(c(&quot;speechiness&quot;, 
+    &quot;tempo&quot;, &quot;valence&quot;, &quot;instrumentalness&quot;, &quot;loudness&quot;, &quot;track_popularity&quot;), 
+    mean, na.rm = T)</code></pre>
+<pre><code>## # A tibble: 1 x 6
+##   speechiness tempo valence instrumentalness loudness track_popularity
+##         &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;            &lt;dbl&gt;    &lt;dbl&gt;            &lt;dbl&gt;
+## 1       0.237  101.   0.667           0.0303    -7.10                5</code></pre>
+<p>After analyzing the general summary statistics for the quantitative audio variables, I decided to create a few summary statistics after grouping by the new mutated variable, popularity category (high, med, low).</p>
+<pre class="r"><code>rap_3 %&gt;% group_by(popularity_cat) %&gt;% summarize_at(c(&quot;speechiness&quot;, 
+    &quot;tempo&quot;, &quot;valence&quot;, &quot;instrumentalness&quot;, &quot;loudness&quot;, &quot;track_popularity&quot;), 
+    mean, na.rm = T) %&gt;% arrange(track_popularity) %&gt;% select(track_popularity, 
+    everything())</code></pre>
+<pre><code>## # A tibble: 3 x 7
+##   track_popularity popularity_cat speechiness tempo valence instrumentalness
+##              &lt;dbl&gt; &lt;chr&gt;                &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;            &lt;dbl&gt;
+## 1              5   low                  0.237  101.   0.667          0.0303 
+## 2             53.6 med                  0.262  115.   0.624          0.0325 
+## 3             72.7 high                 0.246  128.   0.595          0.00825
+## # … with 1 more variable: loudness &lt;dbl&gt;</code></pre>
+<pre class="r"><code>rap_3 %&gt;% group_by(popularity_cat) %&gt;% summarize_at(c(&quot;speechiness&quot;, 
+    &quot;tempo&quot;, &quot;valence&quot;, &quot;instrumentalness&quot;, &quot;loudness&quot;, &quot;track_popularity&quot;), 
+    min, na.rm = T) %&gt;% arrange(track_popularity) %&gt;% select(track_popularity, 
+    everything())</code></pre>
+<pre><code>## # A tibble: 3 x 7
+##   track_popularity popularity_cat speechiness tempo valence instrumentalness
+##              &lt;dbl&gt; &lt;chr&gt;                &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;            &lt;dbl&gt;
+## 1                0 low                 0.0618  74.5   0.203                0
+## 2               34 med                 0.0562  77.2   0.211                0
+## 3               67 high                0.0313  77.9   0.281                0
+## # … with 1 more variable: loudness &lt;dbl&gt;</code></pre>
+<pre class="r"><code>rap_3 %&gt;% group_by(popularity_cat) %&gt;% summarize_at(c(&quot;speechiness&quot;, 
+    &quot;tempo&quot;, &quot;valence&quot;, &quot;instrumentalness&quot;, &quot;loudness&quot;, &quot;track_popularity&quot;), 
+    max, na.rm = T) %&gt;% arrange(track_popularity) %&gt;% select(track_popularity, 
+    everything())</code></pre>
+<pre><code>## # A tibble: 3 x 7
+##   track_popularity popularity_cat speechiness tempo valence instrumentalness
+##              &lt;dbl&gt; &lt;chr&gt;                &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;            &lt;dbl&gt;
+## 1               22 low                  0.427  178.   0.867            0.426
+## 2               66 med                  0.434  180.   0.968            0.35 
+## 3               81 high                 0.431  181.   0.805            0.108
+## # … with 1 more variable: loudness &lt;dbl&gt;</code></pre>
+<p>Lastly, I created a correlation matrix with all numeric variables contained in the dataset.</p>
+<pre class="r"><code>rap_3 %&gt;% na.omit %&gt;% select_if(is.numeric) %&gt;% cor</code></pre>
+<pre><code>##                  track_popularity danceability       energy          key
+## track_popularity      1.000000000  -0.19674872  0.036702792  0.003991072
+## danceability         -0.196748722   1.00000000 -0.089789296 -0.028660815
+## energy                0.036702792  -0.08978930  1.000000000  0.006961492
+## key                   0.003991072  -0.02866082  0.006961492  1.000000000
+## loudness             -0.061089137  -0.05429678  0.626985126 -0.080853804
+## mode                 -0.196874588   0.05012017 -0.066414645 -0.311581287
+## speechiness           0.031089105  -0.04696134 -0.027551718 -0.122051291
+##                      loudness        mode speechiness acousticness
+## track_popularity -0.061089137 -0.19687459  0.03108911  0.033799937
+## danceability     -0.054296784  0.05012017 -0.04696134 -0.119925120
+## energy            0.626985126 -0.06641465 -0.02755172 -0.103950831
+## key              -0.080853804 -0.31158129 -0.12205129  0.159763043
+## loudness          1.000000000  0.01553754 -0.01439783  0.002843521
+## mode              0.015537544  1.00000000 -0.03163295 -0.123886428
+## speechiness      -0.014397827 -0.03163295  1.00000000 -0.053919760
+##                  instrumentalness     liveness      valence        tempo
+## track_popularity      -0.11092660  0.039812644 -0.203789894  0.296128844
+## danceability           0.18028086 -0.079569192  0.196975910 -0.357519106
+## energy                -0.14967900 -0.066370601  0.386363215  0.006688359
+## key                    0.28121036  0.008588917  0.224068134  0.065876805
+## loudness              -0.26326261 -0.101108053  0.181637354 -0.023236958
+## mode                   0.05164158  0.162318894 -0.226604106 -0.017206652
+## speechiness            0.14439399  0.037881988 -0.030097471  0.013254575
+##                   duration_ms
+## track_popularity -0.195087278
+## danceability      0.104209194
+## energy           -0.018475112
+## key               0.138605449
+## loudness         -0.115923467
+## mode              0.092293552
+## speechiness      -0.227289387
+##  [ reached getOption(&quot;max.print&quot;) -- omitted 6 rows ]</code></pre>
+<p>From the summary statistics performed I was able to explore my polished dataset and analyze the quantitative audio variables of interest possible associations with the track popularity. In my final dataset, there was a total of 72 observations, with 63, 68, 64, 33, 68, and 41 distinct observations for the variables speechiness, tempo, valence, instrumentalness, loudness, and track_popularity respectively. The mean, median, standard deviation, variance, min values, and max values were analyzed for each variable in order to get a general idea of what is going on with the whole dataset. In order to see the possible associations of these variables with the popularity of the track, I analyzed the mean values for the high and low categories of track popularity. From this, I was able to see that for the variables speechiness and loudness, their mean values were similar between both low and high popularity categories. On the other hand, the variables tempo, valence, and instrumentalness had mean values that varied from each other between the low and high popularity categories.</p>
+<p>After analyzing the general summary statistics for the quantitative audio variables, I analyzed summary statistics for the same quantitative audio variables after grouping by the popularity categorical variable. Through this analysis, I was able to notice a similar pattern between the audio variables. For the variables speechiness and loudness, the mean was realtively similar between the three groups. On the other hand, for the variables tempo, valence, and instrumentalness there was relatively more variation between the three groups. Observations in the high popularity group had higher values for tempo while having lower values for valence and instrumentalness. The min and max values were also analyzed in order to understand the range within each variable for each group. Lastly, a correlation map was created in order to analyze the potential associations between the audio variables and track popularity. From this correlation map, the highest correlation is seen between track popularity and tempo while the lowest correlation is seen between loudness and track popularity.</p>
+</div>
+<div id="visualizing" class="section level3">
+<h3>Visualizing</h3>
+<p>I created a correlation heatmap of my numeric variables.</p>
+<pre class="r"><code>rap_cormat &lt;- rap_3 %&gt;% na.omit %&gt;% select_if(is.numeric) %&gt;% 
+    cor
+
+rap_cormat %&gt;% as.data.frame() %&gt;% rownames_to_column(&quot;var1&quot;) %&gt;% 
+    pivot_longer(-1, names_to = &quot;var2&quot;, values_to = &quot;correlation&quot;)</code></pre>
+<pre><code>## # A tibble: 169 x 3
+##    var1             var2             correlation
+##    &lt;chr&gt;            &lt;chr&gt;                  &lt;dbl&gt;
+##  1 track_popularity track_popularity     1      
+##  2 track_popularity danceability        -0.197  
+##  3 track_popularity energy               0.0367 
+##  4 track_popularity key                  0.00399
+##  5 track_popularity loudness            -0.0611 
+##  6 track_popularity mode                -0.197  
+##  7 track_popularity speechiness          0.0311 
+##  8 track_popularity acousticness         0.0338 
+##  9 track_popularity instrumentalness    -0.111  
+## 10 track_popularity liveness             0.0398 
+## # … with 159 more rows</code></pre>
+<pre class="r"><code>tidy_rap_cormat &lt;- rap_cormat %&gt;% as.data.frame() %&gt;% rownames_to_column(&quot;var1&quot;) %&gt;% 
+    pivot_longer(-1, names_to = &quot;var2&quot;, values_to = &quot;correlation&quot;)
+
+tidy_rap_cormat %&gt;% ggplot(aes(var1, var2, fill = correlation)) + 
+    geom_tile() + scale_fill_gradient2(low = &quot;red&quot;, mid = &quot;white&quot;, 
+    high = &quot;blue&quot;) + geom_text(aes(label = round(correlation, 
+    2)), color = &quot;black&quot;, size = 2) + theme(axis.text.x = element_text(angle = 90, 
+    hjust = 1)) + coord_fixed() + ggtitle(&quot;Correlation Heatmap&quot;) + 
+    xlab(&quot;Variable 1&quot;) + ylab(&quot;Variable 2&quot;)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>When analyzing the correlation heatmap, I focused on analyzing the correlations between track popularity and the different audio variables. The largest correlation value was found between track popularity and the audio variable tempo. I decided to create a scatterplot, plotting the tempo variable on the x-axis, the track popularity variable on the y-axis, and grouping the points by the popularity category.</p>
+<p>After plotting the variables, I was able to determine that there was no strong correlation between tempo and track popularity. This was able to be determined as there is no strong pattern being displayed and the different points are rather more scattered with no particular patter. We can see that each group (high, med, low) have points that range from lower tempo values to higher tempo values and do not correlate with the popularity of the track. Even though this was the strongest correlation value found between track popularity and the different audio variables, the correlation value is not strong enough to be effective at influencing track popularity.</p>
+<pre class="r"><code>ggplot(rap_3, aes(x = tempo, y = track_popularity, color = popularity_cat)) + 
+    geom_point(size = 2) + ggtitle(&quot;Tempo vs Track Popularity&quot;) + 
+    xlab(&quot;Tempo&quot;) + ylab(&quot;Track Popularity&quot;) + theme_minimal() + 
+    scale_color_brewer(palette = &quot;Dark2&quot;)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Again, when analyzing the correlation heatmap, I focused on analyzing the correlations between track popularity and the different audio variables. The smallest correlation value was found between track popularity and the audio variable valence. I decided to create a bar graph, plotting the popularity category variable on the x-axis, the valence variable's means on the y-axis, and grouping the points by gender, in order to display and emphasize that there was no strong correlation between valence and track popularity.</p>
+<p>After graphing the variables, it is evident that valence and track popularity do not have a strong correlation as each track popularity category averages are around the same value. Since I did not two significant categorial variables that I was analyzing, I decided to group by a categorical variable that I believed would be interesting to analyze outside of analyzing the association between audio variables and track popularity. When grouping by gender, I was very shocked to see that all female artist tracks fell into the high popularity category and did not fall in the medium or low categories. This leads me to think that there could possibly be a correlation between gender and track popularity that could be analyzed in future research.</p>
+<pre class="r"><code>ggplot(rap_3, aes(x = popularity_cat, fill = gender)) + geom_bar(aes(y = valence), 
+    stat = &quot;summary&quot;, fun = mean, position = &quot;dodge&quot;) + geom_errorbar(aes(y = valence), 
+    stat = &quot;summary&quot;, width = 0.8, position = &quot;dodge&quot;) + ggtitle(&quot;Valence vs Track Popularity&quot;) + 
+    xlab(&quot;Track Popularity&quot;) + ylab(&quot;Valence&quot;) + scale_y_continuous(breaks = seq(0, 
+    1, 0.05)) + scale_fill_brewer(palette = &quot;Oranges&quot;) + theme_light()</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="dimensionality-reduction" class="section level3">
+<h3>Dimensionality Reduction</h3>
+<p>Due to my data having a very large amount of numeric variables, I decided to focus on the variables track_popularity, tempo, valence, loudness, speechiness, and instrumentalness, as they were my original variables of interest before any analysis were performed.</p>
+<p>I first took my data set and scaled the variables in order for an accurate comparison between the variables. After scaling, I calculated the Euclidean distances and created a matrix for the resulting data. The number of clusters, k, was determined using the silhouette method. After determining to use 7 clusters, I successfully ran a PAM analysis and visualized the results.</p>
+<p>When analyzing the clusters, the medoids (most central observations) for the 7 clusters were Hypnotize_6_1997, B.O.B._61_2000, Look At Me!_79_2017, A Milli_46_2008, Ha_47_1998,Elevators (Me &amp; You)_59_1996, and Appeal_61_1994.The average values for each cluster were relatively higher for clusters 2-4, while clusters 5-7 had middle ranging values, and cluster 1 had the lower values.</p>
+<p>After analyzing the clusters, the silhouette width was calculated in order to determine how good of a solution was attained. The average silhouette width was equal to be 0.22. From the predetermined cutoffs, the average silhouette width of 0.22 signifies that there was no substantial structure found.</p>
+<pre class="r"><code>rap_4 &lt;- rap_3 %&gt;% unite(track_name, track_popularity, year, 
+    col = &quot;unique&quot;, remove = F) %&gt;% distinct()  #creatiing a distinct unique variable
+
+rap_5 &lt;- rap_4 %&gt;% mutate_if(is.numeric, scale) %&gt;% column_to_rownames(&quot;unique&quot;) %&gt;% 
+    select(track_popularity, tempo, valence, loudness, speechiness, 
+        instrumentalness) %&gt;% na.omit %&gt;% dist %&gt;% as.matrix
+
+library(cluster)
+
+
+sil_width &lt;- vector()
+for (i in 2:10) {
+    pam_fit &lt;- pam(rap_5, diss = TRUE, k = i)
+    sil_width[i] &lt;- pam_fit$silinfo$avg.width
+}
+ggplot() + geom_line(aes(x = 1:10, y = sil_width)) + scale_x_continuous(name = &quot;k&quot;, 
+    breaks = 1:10)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>pam_rap2 &lt;- pam(rap_5, k = 7, diss = T)
+
+final_rap2 &lt;- rap_4 %&gt;% select(track_popularity, tempo, valence, 
+    loudness, speechiness, instrumentalness) %&gt;% mutate(cluster = as.factor(pam_rap2$clustering))
+
+library(GGally)
+ggpairs(final_rap2, columns = 1:6, aes(color = cluster))</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-13-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>pam_rap2$silinfo$avg.width</code></pre>
+<pre><code>## [1] 0.2210879</code></pre>
+<pre class="r"><code>plot(pam_rap2, which = 2)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-13-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>final_rap2 %&gt;% rename(popularity = track_popularity) %&gt;% group_by(cluster) %&gt;% 
+    summarize_if(is.numeric, .funs = list(mean = mean, median = median, 
+        sd = sd), na.rm = T) %&gt;% pivot_longer(contains(&quot;_&quot;)) %&gt;% 
+    separate(name, sep = &quot;_&quot;, into = c(&quot;variable&quot;, &quot;stat&quot;)) %&gt;% 
+    pivot_wider(names_from = &quot;variable&quot;, values_from = &quot;value&quot;) %&gt;% 
+    arrange(stat)</code></pre>
+<pre><code>## # A tibble: 21 x 8
+##    cluster stat   popularity tempo valence loudness speechiness instrumentalness
+##    &lt;fct&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;       &lt;dbl&gt;            &lt;dbl&gt;
+##  1 1       mean         3.87  91.3   0.659    -6.14       0.268       0.0000813 
+##  2 2       mean        48.6  148.    0.623    -5.72       0.114       0.000312  
+##  3 3       mean        66.9  138.    0.302    -7.27       0.297       0.00601   
+##  4 4       mean        56.4  164.    0.703    -8.45       0.291       0.0123    
+##  5 5       mean        56     89.4   0.738    -5.26       0.227       0.00249   
+##  6 6       mean        56.1   92.9   0.595   -11.0        0.257       0.0000693 
+##  7 7       mean        30     97.4   0.681    -9.61       0.299       0.322     
+##  8 1       median       3     90.0   0.694    -5.84       0.282       0         
+##  9 2       median      60.5  144.    0.56     -5.45       0.100       0.00000689
+## 10 3       median      66.5  145.    0.281    -7.33       0.297       0.0000372 
+## # … with 11 more rows</code></pre>
+</div>
+
+            
+        <hr>         <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div> 
+            </div>
+          </div>
+
+   <hr>  <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div> 
+        </div>
+      </div>
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../../js/docs.min.js"></script>
+<script src="../../js/main.js"></script>
+
+<script src="../../js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>
