@@ -17,6 +17,15 @@
     </item>
     
     <item>
+      <title>Project 2: Modeling, Testing, and Predicting</title>
+      <link>/project/project2/</link>
+      <pubDate>Wed, 02 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project2/</guid>
+      <description>Introduction The dataset I have chosen takes a look into the effects of individuals with an aneurysmal subarachnoid hemorrhage. The dataset summarizes several clinical and one laboratory variable of 113 patients with an aneurysmal subarachnoid hemorrhage. The variables consist of measuring the Glasgow Outcome Score at 6 months (GOS6), outcome of the patient, gender, age, the World Federation of Neurological Surgeons score (WFNS), S100 Calcium Binding Protein B (S100B) concentrations, and Nucleoside diphosphate kinase A (NDKA) concentrations.</description>
+    </item>
+    
+    <item>
       <title>Blog Post</title>
       <link>/post/2015/07/23/blog-post/</link>
       <pubDate>Thu, 23 Jul 2015 21:13:14 -0500</pubDate>
@@ -35,15 +44,6 @@
       <description>R Markdown This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.
 You can embed an R code chunk like this:
 summary(cars) ## speed dist ## Min. : 4.0 Min. : 2.00 ## 1st Qu.:12.0 1st Qu.: 26.00 ## Median :15.0 Median : 36.00 ## Mean :15.4 Mean : 42.98 ## 3rd Qu.</description>
-    </item>
-    
-    <item>
-      <title>Project 2: Modeling, Testing, and Predicting</title>
-      <link>/project/project2/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/project/project2/</guid>
-      <description>Introduction The dataset I have chosen takes a look into the effects of individuals with an aneurysmal subarachnoid hemorrhage. The dataset summarizes several clinical and one laboratory variable of 113 patients with an aneurysmal subarachnoid hemorrhage. The variables consist of measuring the Glasgow Outcome Score at 6 months (GOS6), outcome of the patient, gender, age, the World Federation of Neurological Surgeons score (WFNS), S100 Calcium Binding Protein B (S100B) concentrations, and Nucleoside diphosphate kinase A (NDKA) concentrations.</description>
     </item>
     
     <item>
