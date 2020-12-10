@@ -1,11 +1,50 @@
 ---
-title: "Blog Post"
+title: "All About Python"
 author: "Teresa Landeros"
-date: 2015-07-23T21:13:14-05:00
+date: 2020-12-09T21:13:14-05:00
 categories: ["R"]
-tags: ["R Markdown", "plot", "regression"]
+
 ---
 
-#Heading of my post!
+#Learning about Python
 
-![](/post/2020-12-02-test-post_files/Teresa.jpeg) (width=200)
+Learning about Python in my computational statistics course was my first introduction to the platform and I have to say, I was pleasantly surprised to find out it wasn't as bad as people made it out to be. I still personally enjoy using R studio over Python, but I may just be a little biased since I started this coding journey on the R platform. It is interesting to see however, that Python is capable of doing a majority of the work that R can do and sometimes even more. 
+
+##Python and R Studio
+One of the things I found particularly interesting is the ability for the two platforms to communicate! Say for instance you want to grab a data set that is already installed in R, but you want to be able to easily learn more about the data set using Python. Well I have the perfect solution for you!
+
+Go ahead and load the reticulate package and grab the data set of your interest
+```{R}
+library(reticulate)
+quakes <- quakes
+```
+
+Now, try getting some of the summary statistics using python with the data set you pulled from R....go ahead, there's nothing to be afraid of, I promise this works!
+```{python}
+import numpy as np
+r.quakes.describe() 
+```
+
+Another cool trick in Python is indexing a data frame. Say we only want to look at the variables long, lat, and depth in the quakes data set from R. Say no more!
+```{python}
+r.quakes[["long", "lat", "depth"]]
+```
+
+Not only can we pull data sets from R and use Python functions on them, but we could also do it the other way around. Check this out, we are going to make a graph using R studio's ggplot function using a data set from Python.
+```{python}
+import seaborn as sns
+penguins=sns.load_dataset('penguins') 
+df=penguins
+```
+
+```{r}
+library(ggplot2)
+ggplot()+geom_point(aes(py$df$bill_length_mm,py$df$body_mass_g))
+```
+
+The world becomes our oyster with the ability to communicate between R and Python, at least in the coding world. Now instead of battling between the two platforms, we can have the best of both worlds :) 
+
+
+
+![](/post/2020-12-02-test-post_files/meme.png)
+

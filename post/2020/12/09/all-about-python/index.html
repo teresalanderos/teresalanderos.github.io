@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Teresa Landeros" />
+    
+    <link rel="shortcut icon" type="image/x-icon" href="../../../../../img/favicon.ico">
+    <title>All About Python</title>
+    <meta name="generator" content="Hugo 0.79.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../../../../../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="../../../../../"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="../../../../../post/">BLOG</a></li>
+        
+        <li><a href="../../../../../projects/">PROJECTS</a></li>
+        
+        <li><a href="../../../../../resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="../../../../../post/2020/12/09/all-about-python/">All About Python</a></strong>
+          </h3>
+        </div>
+ 
+<div class="blog-title">
+          <h4>
+         December 9, 2020 
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<div id="learning-about-python" class="section level1">
+<h1>Learning about Python</h1>
+<p>Learning about Python in my computational statistics course was my first introduction to the platform and I have to say, I was pleasantly surprised to find out it wasn't as bad as people made it out to be. I still personally enjoy using R studio over Python, but I may just be a little biased since I started this coding journey on the R platform. It is interesting to see however, that Python is capable of doing a majority of the work that R can do and sometimes even more.</p>
+<div id="python-and-r-studio" class="section level2">
+<h2>Python and R Studio</h2>
+<p>One of the things I found particularly interesting is the ability for the two platforms to communicate! Say for instance you want to grab a data set that is already installed in R, but you want to be able to easily learn more about the data set using Python. Well I have the perfect solution for you!</p>
+<p>Go ahead and load the reticulate package and grab the data set of your interest</p>
+<pre class="r"><code>library(reticulate)
+quakes &lt;- quakes</code></pre>
+<p>Now, try getting some of the summary statistics using python with the data set you pulled from R....go ahead, there's nothing to be afraid of, I promise this works!</p>
+<pre class="python"><code>import numpy as np
+r.quakes.describe() </code></pre>
+<pre><code>##                lat         long        depth          mag     stations
+## count  1000.000000  1000.000000  1000.000000  1000.000000  1000.000000
+## mean    -20.642750   179.462020   311.371000     4.620400    33.418000
+## std       5.028791     6.069497   215.535498     0.402773    21.900386
+## min     -38.590000   165.670000    40.000000     4.000000    10.000000
+## 25%     -23.470000   179.620000    99.000000     4.300000    18.000000
+## 50%     -20.300000   181.410000   247.000000     4.600000    27.000000
+## 75%     -17.637500   183.200000   543.000000     4.900000    42.000000
+## max     -10.720000   188.130000   680.000000     6.400000   132.000000</code></pre>
+<p>Another cool trick in Python is indexing a data frame. Say we only want to look at the variables long, lat, and depth in the quakes data set from R. Say no more!</p>
+<pre class="python"><code>r.quakes[[&quot;long&quot;, &quot;lat&quot;, &quot;depth&quot;]]</code></pre>
+<pre><code>##        long    lat  depth
+## 0    181.62 -20.42    562
+## 1    181.03 -20.62    650
+## 2    184.10 -26.00     42
+## 3    181.66 -17.97    626
+## 4    181.96 -20.42    649
+## 5    184.31 -19.68    195
+## 6    166.10 -11.70     82
+## 7    181.93 -28.11    194
+## 8    181.74 -28.74    211
+## 9    179.59 -17.47    622
+## 10   180.69 -21.44    583
+## 11   167.00 -12.26    249
+## 12   182.11 -18.54    554
+## 13   181.66 -21.00    600
+## 14   169.92 -20.70    139
+## 15   184.95 -15.94    306
+## 16   165.96 -13.64     50
+## 17   181.50 -17.83    590
+## 18   179.78 -23.50    570
+## 19   180.31 -22.63    598
+## 20   181.16 -20.84    576
+## 21   166.32 -10.98    211
+## 22   180.16 -23.30    512
+## 23   182.00 -30.20    125
+## 24   180.28 -19.66    431
+## 25   181.49 -17.94    537
+## 26   167.51 -14.72    155
+## 27   180.79 -16.46    498
+## 28   181.47 -20.97    582
+## 29   182.37 -19.84    328
+## ..      ...    ...    ...
+## 970  182.38 -25.79    172
+## 971  184.50 -23.75     54
+## 972  184.50 -24.10     68
+## 973  169.05 -18.56    217
+## 974  184.68 -23.30    102
+## 975  185.74 -17.03    178
+## 976  183.71 -20.77    251
+## 977  183.50 -28.10     42
+## 978  182.26 -18.83    575
+## 979  170.70 -23.00     43
+## 980  181.67 -20.82    577
+## 981  170.56 -22.95     42
+## 982  183.60 -28.22     75
+## 983  183.50 -27.99     71
+## 984  187.15 -15.54     60
+## 985  166.93 -12.37    291
+## 986  171.66 -22.33    125
+## 987  170.30 -22.70     69
+## 988  181.30 -17.86    614
+## 989  184.53 -16.00    108
+## 990  181.42 -20.73    575
+## 991  181.42 -15.45    409
+## 992  183.86 -20.05    243
+## 993  181.37 -17.95    642
+## 994  188.10 -17.70     45
+## 995  179.54 -25.93    470
+## 996  167.06 -12.28    248
+## 997  184.20 -20.13    244
+## 998  187.80 -17.40     40
+## 999  170.56 -21.59    165
+## 
+## [1000 rows x 3 columns]</code></pre>
+<p>Not only can we pull data sets from R and use Python functions on them, but we could also do it the other way around. Check this out, we are going to make a graph using R studio's ggplot function using a data set from Python.</p>
+<pre class="python"><code>import seaborn as sns
+penguins=sns.load_dataset(&#39;penguins&#39;) 
+df=penguins</code></pre>
+<pre class="r"><code>library(ggplot2)
+ggplot()+geom_point(aes(py$df$bill_length_mm,py$df$body_mass_g))</code></pre>
+<pre><code>## Warning: Removed 2 rows containing missing values (geom_point).</code></pre>
+<p><img src="../../../../../post/2020-12-02-test-post_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>The world becomes our oyster with the ability to communicate between R and Python, at least in the coding world. Now instead of battling between the two platforms, we can have the best of both worlds :)</p>
+<div class="figure">
+<img src="../../../../../post/2020-12-02-test-post_files/meme.png" />
+
+</div>
+</div>
+</div>
+
+            
+        <hr>         <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div> 
+            </div>
+          </div>
+
+   <hr>  <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div> 
+        </div>
+      </div>
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../../../../../js/docs.min.js"></script>
+<script src="../../../../../js/main.js"></script>
+
+<script src="../../../../../js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>
